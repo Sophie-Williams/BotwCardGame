@@ -1,5 +1,5 @@
 ﻿using BotwCardGame.Class;
-using BotwCardGame.Ressources;
+using BotwCardGame.Ressources.Enums;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BotwCardGameTests

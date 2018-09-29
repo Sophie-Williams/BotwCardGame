@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using BotwCardGame.Ressources;
+using BotwCardGame.Models;
+using BotwCardGame.Ressources.Enums;
 using Newtonsoft.Json;
 
 namespace BotwCardGame.Class

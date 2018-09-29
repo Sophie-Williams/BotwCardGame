@@ -1,4 +1,4 @@
-﻿namespace BotwCardGame.Class
+﻿namespace BotwCardGame.Models
 {
     public class EquipmentBody
     {

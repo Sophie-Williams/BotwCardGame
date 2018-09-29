@@ -1,4 +1,4 @@
-﻿namespace BotwCardGame.Ressources
+﻿namespace BotwCardGame.Ressources.Enums
 {
     public enum ItemType
     {

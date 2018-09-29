@@ -1,8 +1,10 @@
-﻿using BotwCardGame.Ressources;
+﻿using BotwCardGame.Ressources.Enums;
+// ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace BotwCardGame.Class
+namespace BotwCardGame.Models
 {
-    public abstract class Item
+    public class Item
     {
         public int Id { get; set; }
         public string Name { get; set; }
