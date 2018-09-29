@@ -1,17 +1,36 @@
-{
-  "_commentaire": "penser a modifier la constante ExistingItemNumber dans PlayerTests.cs a chaque ajout d'item",
-  "Items": [
-    {
-      "Id": 1,
-      "Name": "name",
-      "Description": "description",
-      "Quantity": 1
-    },
-    {
-      "Id": 2,
-      "Name": "name2",
-      "Description": "description2",
-      "Quantity": 1
+[
+  {
+    "Id": 101,
+    "Name": "Coeur de Vie",
+    "Description": "Rajoute 1 PV max au joueur",
+    "Quantity": 1,
+    "Type": "Boost",
+    "BoostSkill": {
+      "BoostSkillType": "MaxHealth",
+      "Value": 1
     }
-  ]
-}
+  },
+  {
+    "Id": 102,
+    "Name": "Venaison Divine",
+    "Description": "Venaison Divine",
+    "Quantity": 1,
+    "Type": "Boost",
+    "BoostSkill": {
+      "BoostSkillType": "Health",
+      "Value": 3
+    }
+  },
+  {
+    "Id": 201,
+    "Name": "Master Sword",
+    "Description": "Epee de Legende",
+    "Quantity": 1,
+    "Type": "Equipment",
+    "Equipment": {
+      "Type": "Sword",
+      "Value": 60,
+      "IsEquiped": false
+    }
+  }
+]

@@ -11,6 +11,8 @@ namespace BotwCardGame.Ressources
         NotFound,
         Created,
         Added,
-        Removed
+        Removed,
+        Boosted,
+        Equiped
     }
 }

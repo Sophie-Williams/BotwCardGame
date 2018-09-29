@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using BotwCardGame.Ressources;
-using BotwCardGame.Templates;
-using Nancy.Json;
+using Newtonsoft.Json;
 
 namespace BotwCardGame.Class
 {
-    public class Player : IPlayer
+    public class Player
     {
         public Player()
         {
-            var assembly = IntrospectionExtensions.GetTypeInfo(typeof(Constants)).Assembly;
-            Stream stream = assembly.GetManifestResourceStream("BotwCardGame.Ressources.ItemList.json");
-            var streamReader = new StreamReader(stream);
+            var stream = typeof(Constants).GetTypeInfo().Assembly.GetManifestResourceStream("BotwCardGame.Ressources.ItemList.json");
+            var streamReader = new StreamReader(stream ?? throw new InvalidOperationException());
             var json = streamReader.ReadToEnd();
-            ExistingItemsList = new JavaScriptSerializer().Deserialize<List<Item>>(json);
+            ExistingItemsList = JsonConvert.DeserializeObject<List<Item>>(json);
             Life = 3;
+            MaxLife = 3;
             Inventory = new List<Item>(); 
+            EquipmentBody = new EquipmentBody();
         }
 
         public Constants AddItemToInventory(int id)
@@ -58,11 +58,137 @@ namespace BotwCardGame.Class
                 Inventory.Find(i => i.Id == id).Quantity -= 1;
 
             return Constants.Removed;
+        }
 
+        public Constants UseItemFromInventory(int id)
+        {
+            var item = Inventory.Find(i => i.Id == id);
+            if (item == null)
+                return Constants.NotFound;
+            switch (item.Type)
+            {
+                case ItemType.Boost:
+                    return UseBoostItem(item);
+                case ItemType.Equipment:
+                    return UseEquipmentItem(item.Id, item);
+                default:
+                    return Constants.Ok;
+            }
+        }
+
+        public Constants RemoveEquipment(EquipmentBodyType type)
+        {
+            switch (type)
+            {
+                case EquipmentBodyType.Head:
+                    EquipmentBody.Head = null;
+                    break;
+                case EquipmentBodyType.Body:
+                    EquipmentBody.Body = null;
+                    break;
+                case EquipmentBodyType.Foot:
+                    EquipmentBody.Foot = null;
+                    break;
+                case EquipmentBodyType.Weapon:
+                    EquipmentBody.Weapon = null;
+                    break;
+                case EquipmentBodyType.Bow:
+                    EquipmentBody.Bow = null;
+                    break;
+                case EquipmentBodyType.Shield:
+                    EquipmentBody.Shield = null;
+                    break;
+            }
+
+            return Constants.Removed;
+        }
+
+        private Constants UseEquipmentItem(int id, Item equipment)
+        {
+            switch (equipment.Equipment.Type)
+            {
+                case EquipmentType.Head:
+                    if (EquipmentBody.Head != null)
+                        Inventory.Find(i => i.Id == EquipmentBody.Head.Id).Equipment.IsEquiped = false;
+                    EquipmentBody.Head = equipment;
+                    Inventory.Find(i => i.Id == id).Equipment.IsEquiped = true;
+                    break;
+                case EquipmentType.Body:
+                    if (EquipmentBody.Body != null)
+                        Inventory.Find(i => i.Id == EquipmentBody.Body.Id).Equipment.IsEquiped = false;
+                    EquipmentBody.Body = equipment;
+                    Inventory.Find(i => i.Id == id).Equipment.IsEquiped = true;
+                    break;
+                case EquipmentType.Foot:
+                    if (EquipmentBody.Foot != null)
+                        Inventory.Find(i => i.Id == EquipmentBody.Foot.Id).Equipment.IsEquiped = false;
+                    EquipmentBody.Foot = equipment;
+                    Inventory.Find(i => i.Id == id).Equipment.IsEquiped = true;
+                    break;
+                case EquipmentType.Sword:
+                    if (EquipmentBody.Weapon != null)
+                        Inventory.Find(i => i.Id == EquipmentBody.Weapon.Id).Equipment.IsEquiped = false;
+                    EquipmentBody.Weapon = equipment;
+                    Inventory.Find(i => i.Id == id).Equipment.IsEquiped = true;
+                    break;
+                case EquipmentType.LongSword:
+                    if (EquipmentBody.Weapon != null)
+                        Inventory.Find(i => i.Id == EquipmentBody.Weapon.Id).Equipment.IsEquiped = false;
+                    if (EquipmentBody.Shield != null)
+                    {
+                        Inventory.Find(i => i.Id == EquipmentBody.Shield.Id).Equipment.IsEquiped = false;
+                        EquipmentBody.Shield = null;
+                    }
+                    EquipmentBody.Weapon = equipment;
+                    Inventory.Find(i => i.Id == id).Equipment.IsEquiped = true;
+                    break;
+                case EquipmentType.Bow:
+                    if (EquipmentBody.Bow != null)
+                        Inventory.Find(i => i.Id == EquipmentBody.Bow.Id).Equipment.IsEquiped = false;
+                    EquipmentBody.Bow = equipment;
+                    Inventory.Find(i => i.Id == id).Equipment.IsEquiped = true;
+                    break;
+                case EquipmentType.Shield:
+                    if (EquipmentBody.Shield != null)
+                        Inventory.Find(i => i.Id == EquipmentBody.Shield.Id).Equipment.IsEquiped = false;
+                    if (EquipmentBody.Weapon != null && EquipmentBody.Weapon.Equipment.Type == EquipmentType.LongSword)
+                    {
+                        Inventory.Find(i => i.Id == EquipmentBody.Weapon.Id).Equipment.IsEquiped = false;
+                        EquipmentBody.Weapon = null;
+                    }
+                    EquipmentBody.Shield = equipment;
+                    Inventory.Find(i => i.Id == id).Equipment.IsEquiped = true;
+                    break;
+            }
+            return Constants.Equiped;
+        }
+
+        private Constants UseBoostItem(Item item)
+        {
+            switch (item.BoostSkill.BoostSkillType)
+            {
+                case BoostSkillType.MaxHealth:
+                    MaxLife += item.BoostSkill.Value;
+                    Life = MaxLife;
+                    RemoveItemFromInventory(item.Id);
+                    break;
+                case BoostSkillType.Health:
+                    RemoveItemFromInventory(item.Id);
+                    if (Life == MaxLife)
+                        return Constants.Failed;
+                    Life += item.BoostSkill.Value;
+                    if (Life > MaxLife)
+                        Life = MaxLife;
+                    break;
+            }
+
+            return Constants.Boosted;
         }
 
         public int Life { get; set; }
+        public int MaxLife { get; set; }
         public List<Item> Inventory { get; set; }
+        public EquipmentBody EquipmentBody { get; set; }
         public List<Item> ExistingItemsList { get; }
     }
 }
