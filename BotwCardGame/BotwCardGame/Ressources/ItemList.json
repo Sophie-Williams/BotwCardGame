@@ -1,0 +1,17 @@
+{
+  "_commentaire": "penser a modifier la constante ExistingItemNumber dans PlayerTests.cs a chaque ajout d'item",
+  "Items": [
+    {
+      "Id": 1,
+      "Name": "name",
+      "Description": "description",
+      "Quantity": 1
+    },
+    {
+      "Id": 2,
+      "Name": "name2",
+      "Description": "description2",
+      "Quantity": 1
+    }
+  ]
+}
