@@ -10,6 +10,9 @@ namespace BotwCardGame.Class
 {
     public class Player
     {
+        /// <summary>
+        /// Init player
+        /// </summary>
         public Player()
         {
             var stream = typeof(Constants).GetTypeInfo().Assembly.GetManifestResourceStream("BotwCardGame.Ressources.ItemList.json");
@@ -22,6 +25,10 @@ namespace BotwCardGame.Class
             EquipmentBody = new EquipmentBody();
         }
 
+        /// <summary>
+        /// Add an item to the player inventory
+        /// </summary>
+        /// <param name="id">Id of the item to add</param>
         public Constants AddItemToInventory(int id)
         {
             //Verification que l'item existe dans la liste complete
@@ -42,6 +49,10 @@ namespace BotwCardGame.Class
             return Constants.Added;
         }
 
+        /// <summary>
+        /// Remove an item from the player inventory
+        /// </summary>
+        /// <param name="id">Id of the item to remove</param>
         public Constants RemoveItemFromInventory(int id)
         {
             //Verification que l'item existe dans la liste complete & dans l'inventaire
@@ -59,6 +70,10 @@ namespace BotwCardGame.Class
             return Constants.Removed;
         }
 
+        /// <summary>
+        /// Use an item on the player inventory
+        /// </summary>
+        /// <param name="id">Id of the item to use</param>
         public Constants UseItemFromInventory(int id)
         {
             var item = Inventory.Find(i => i.Id == id);
@@ -69,12 +84,16 @@ namespace BotwCardGame.Class
                 case ItemType.Boost:
                     return UseBoostItem(item);
                 case ItemType.Equipment:
-                    return UseEquipmentItem(item.Id, item);
+                    return UseEquipmentItem(item);
                 default:
                     return Constants.Ok;
             }
         }
 
+        /// <summary>
+        /// Remove an equipment from player body
+        /// </summary>
+        /// <param name="type">EquipmentBodyType of the equipment to remove</param>
         public Constants RemoveEquipment(EquipmentBodyType type)
         {
             switch (type)
@@ -104,7 +123,11 @@ namespace BotwCardGame.Class
             return Constants.Removed;
         }
 
-        private Constants UseEquipmentItem(int id, Item equipment)
+        /// <summary>
+        /// Equip an equipment
+        /// </summary>
+        /// <param name="equipment">Item to equip</param>
+        private Constants UseEquipmentItem(Item equipment)
         {
             switch (equipment.Equipment.Type)
             {
@@ -112,25 +135,25 @@ namespace BotwCardGame.Class
                     if (EquipmentBody.Head != null)
                         Inventory.Find(i => i.Id == EquipmentBody.Head.Id).Equipment.IsEquiped = false;
                     EquipmentBody.Head = equipment;
-                    Inventory.Find(i => i.Id == id).Equipment.IsEquiped = true;
+                    Inventory.Find(i => i.Id == equipment.Id).Equipment.IsEquiped = true;
                     break;
                 case EquipmentType.Body:
                     if (EquipmentBody.Body != null)
                         Inventory.Find(i => i.Id == EquipmentBody.Body.Id).Equipment.IsEquiped = false;
                     EquipmentBody.Body = equipment;
-                    Inventory.Find(i => i.Id == id).Equipment.IsEquiped = true;
+                    Inventory.Find(i => i.Id == equipment.Id).Equipment.IsEquiped = true;
                     break;
                 case EquipmentType.Foot:
                     if (EquipmentBody.Foot != null)
                         Inventory.Find(i => i.Id == EquipmentBody.Foot.Id).Equipment.IsEquiped = false;
                     EquipmentBody.Foot = equipment;
-                    Inventory.Find(i => i.Id == id).Equipment.IsEquiped = true;
+                    Inventory.Find(i => i.Id == equipment.Id).Equipment.IsEquiped = true;
                     break;
                 case EquipmentType.Sword:
                     if (EquipmentBody.Weapon != null)
                         Inventory.Find(i => i.Id == EquipmentBody.Weapon.Id).Equipment.IsEquiped = false;
                     EquipmentBody.Weapon = equipment;
-                    Inventory.Find(i => i.Id == id).Equipment.IsEquiped = true;
+                    Inventory.Find(i => i.Id == equipment.Id).Equipment.IsEquiped = true;
                     break;
                 case EquipmentType.LongSword:
                     if (EquipmentBody.Weapon != null)
@@ -141,13 +164,13 @@ namespace BotwCardGame.Class
                         EquipmentBody.Shield = null;
                     }
                     EquipmentBody.Weapon = equipment;
-                    Inventory.Find(i => i.Id == id).Equipment.IsEquiped = true;
+                    Inventory.Find(i => i.Id == equipment.Id).Equipment.IsEquiped = true;
                     break;
                 case EquipmentType.Bow:
                     if (EquipmentBody.Bow != null)
                         Inventory.Find(i => i.Id == EquipmentBody.Bow.Id).Equipment.IsEquiped = false;
                     EquipmentBody.Bow = equipment;
-                    Inventory.Find(i => i.Id == id).Equipment.IsEquiped = true;
+                    Inventory.Find(i => i.Id == equipment.Id).Equipment.IsEquiped = true;
                     break;
                 case EquipmentType.Shield:
                     if (EquipmentBody.Shield != null)
@@ -158,7 +181,7 @@ namespace BotwCardGame.Class
                         EquipmentBody.Weapon = null;
                     }
                     EquipmentBody.Shield = equipment;
-                    Inventory.Find(i => i.Id == id).Equipment.IsEquiped = true;
+                    Inventory.Find(i => i.Id == equipment.Id).Equipment.IsEquiped = true;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -166,6 +189,10 @@ namespace BotwCardGame.Class
             return Constants.Equiped;
         }
 
+        /// <summary>
+        /// Use a boost item
+        /// </summary>
+        /// <param name="item">Item to use</param>
         private Constants UseBoostItem(Item item)
         {
             switch (item.BoostSkill.BoostSkillType)
