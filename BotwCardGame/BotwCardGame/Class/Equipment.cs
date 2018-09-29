@@ -2,7 +2,7 @@
 
 namespace BotwCardGame.Class
 {
-    public class Equipment
+    public abstract class Equipment
     {
         public EquipmentType Type { get; set; }
         public int Value { get; set; }

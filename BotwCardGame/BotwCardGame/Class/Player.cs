@@ -24,23 +24,21 @@ namespace BotwCardGame.Class
         public Constants AddItemToInventory(int id)
         {
             //Verification que l'item existe dans la liste complete
-            if (ExistingItemsList.Exists(i => i.Id == id))
+            if (!ExistingItemsList.Exists(i => i.Id == id))
+                return Constants.NotFound;
+
+            //Si on en as pas encore, on l'ajoute
+            if (!Inventory.Exists(i => i.Id == id))
             {
-                //Si on en as pas encore, on l'ajoute
-                if (!Inventory.Exists(i => i.Id == id))
-                {
-                    var item = ExistingItemsList.Find(i => i.Id == id);
-                    Inventory.Add(item);
-                }
-
-                //s'il existe on incremente la quantite
-                else
-                    Inventory.Find(i => i.Id == id).Quantity += 1;
-
-                return Constants.Added;
+                var item = ExistingItemsList.Find(i => i.Id == id);
+                Inventory.Add(item);
             }
 
-            return Constants.NotFound;
+            //s'il existe on incremente la quantite
+            else
+                Inventory.Find(i => i.Id == id).Quantity += 1;
+
+            return Constants.Added;
         }
 
         public Constants RemoveItemFromInventory(int id)
@@ -98,6 +96,8 @@ namespace BotwCardGame.Class
                 case EquipmentBodyType.Shield:
                     EquipmentBody.Shield = null;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
 
             return Constants.Removed;
@@ -159,6 +159,8 @@ namespace BotwCardGame.Class
                     EquipmentBody.Shield = equipment;
                     Inventory.Find(i => i.Id == id).Equipment.IsEquiped = true;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             return Constants.Equiped;
         }
@@ -180,15 +182,17 @@ namespace BotwCardGame.Class
                     if (Life > MaxLife)
                         Life = MaxLife;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             return Constants.Boosted;
         }
 
         public int Life { get; set; }
-        public int MaxLife { get; set; }
-        public List<Item> Inventory { get; set; }
-        public EquipmentBody EquipmentBody { get; set; }
+        public int MaxLife { get; private set; }
+        public List<Item> Inventory { get; }
+        public EquipmentBody EquipmentBody { get; }
         public List<Item> ExistingItemsList { get; }
     }
 }
