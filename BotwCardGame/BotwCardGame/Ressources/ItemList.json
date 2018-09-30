@@ -13,7 +13,7 @@
   {
     "Id": 102,
     "Name": "Venaison Divine",
-    "Description": "Venaison Divine",
+    "Description": "Restaure 3 PV au joueur",
     "Quantity": 1,
     "Type": "Boost",
     "BoostSkill": {
